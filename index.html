@@ -46,31 +46,48 @@
     const screen = document.getElementById("screen");
     const equalsButton = document.getElementById("equals");
     let justCleared = true;
+    const goodChars = ["0","1","2","3","4","5","6","7","8","9","*","/",".","+","-"];
+    const zeroChars = ["0","*","/",".","+","-"];
     function initialize() {
-        document.getElementById("one").addEventListener("click", () => {if(justCleared) wiper(); screen.textContent += "1"});
-        document.getElementById("two").addEventListener("click", () => {if(justCleared) wiper(); screen.textContent += "2"});
-        document.getElementById("three").addEventListener("click", () => {if(justCleared) wiper(); screen.textContent += "3"});
-        document.getElementById("four").addEventListener("click", () => {if(justCleared) wiper(); screen.textContent += "4"});
-        document.getElementById("five").addEventListener("click", () => {if(justCleared) wiper(); screen.textContent += "5"});
-        document.getElementById("six").addEventListener("click", () => {if(justCleared) wiper(); screen.textContent += "6"});
-        document.getElementById("seven").addEventListener("click", () => {if(justCleared) wiper(); screen.textContent += "7"});
-        document.getElementById("eight").addEventListener("click", () => {if(justCleared) wiper(); screen.textContent += "8"});
-        document.getElementById("nine").addEventListener("click", () => {if(justCleared) wiper(); screen.textContent += "9"});
-        document.getElementById("zero").addEventListener("click", () => {if(justCleared) wiper(1); screen.textContent += "0"});
-        document.getElementById("mult").addEventListener("click", () => {if(justCleared) wiper(1); screen.textContent += "*"});
-        document.getElementById("div").addEventListener("click", () => {if(justCleared) wiper(1); screen.textContent += "/"});
-        document.getElementById("dot").addEventListener("click", () => {if(justCleared) wiper(1); screen.textContent += "."});
-        document.getElementById("plus").addEventListener("click", () => {if(justCleared) wiper(1); screen.textContent += "+"});
-        document.getElementById("minus").addEventListener("click", () => {if(justCleared) wiper(1); screen.textContent += "-"});
+        document.getElementById("one").addEventListener("click", () => {wiper("1")});
+        document.getElementById("two").addEventListener("click", () => {wiper("2")});
+        document.getElementById("three").addEventListener("click", () => {wiper("3")});
+        document.getElementById("four").addEventListener("click", () => {wiper("4")});
+        document.getElementById("five").addEventListener("click", () => {wiper("5")});
+        document.getElementById("six").addEventListener("click", () => {wiper("6")});
+        document.getElementById("seven").addEventListener("click", () => {wiper("7")});
+        document.getElementById("eight").addEventListener("click", () => {wiper("8")});
+        document.getElementById("nine").addEventListener("click", () => {wiper("9")});
+        document.getElementById("zero").addEventListener("click", () => {wiper("0")});
+        document.getElementById("mult").addEventListener("click", () => {wiper("*")});
+        document.getElementById("div").addEventListener("click", () => {wiper("/")});
+        document.getElementById("dot").addEventListener("click", () => {wiper(".")});
+        document.getElementById("plus").addEventListener("click", () => {wiper("+")});
+        document.getElementById("minus").addEventListener("click", () => {wiper("-")});
         document.getElementById("clear").addEventListener("click", () => {screen.textContent = "0"; justCleared = true;});
-        document.getElementById("equals").addEventListener("click", () => whatToDo(screen.textContent));
+        document.getElementById("equals").addEventListener("click", () => equals(screen.textContent));
+        
+        document.addEventListener("keydown", (e) => {
+            e.preventDefault;
+            if (goodChars.includes(e.key)) wiper(e.key);
+            else if (e.key === "Backspace") {
+                if (!justCleared) screen.textContent = screen.textContent.slice(0,screen.textContent.length-1);
+                else screen.textContent = "";
+            }
+            else if (e.key === "=" || e.key ==="Enter") equals(screen.textContent);
+        })
     }
 
-    function wiper(state){
-        console.log("yo");
-        if (state === 1) screen.textContent = "0"
-        else screen.textContent = "";
+    function wiper(key){
+        if (justCleared && !zeroChars.includes(key)) {
+            screen.textContent = "";
+        }
         justCleared = false;
+        
+        
+        screen.textContent += key;
+
+
     }
 
     initialize();
@@ -110,13 +127,13 @@
         return ans;
     }
 
-    equalsButton.addEventListener("click", () => {
+    function equals() {
         screen.textContent = screen.textContent.replace('-', '+-');
         let n = whatToDo(screen.textContent);
         if (typeof n !== "number" || n === Infinity || n != n) {justCleared = true; screen.textContent = "ERROR"}
-        else screen.textContent = n;
-        
-    })
+        else screen.textContent = Math.floor(n*10000)/10000;
+        justCleared = true;
+    }
 
     
 </script>
