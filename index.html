@@ -47,7 +47,7 @@
     const equalsButton = document.getElementById("equals");
     let justCleared = true;
     const goodChars = ["0","1","2","3","4","5","6","7","8","9","*","/",".","+","-"];
-    const zeroChars = ["0","*","/",".","+","-"];
+    const zeroChars = ["*","/",".","+","-"];
     function initialize() {
         document.getElementById("one").addEventListener("click", () => {wiper("1")});
         document.getElementById("two").addEventListener("click", () => {wiper("2")});
@@ -69,19 +69,21 @@
         
         document.addEventListener("keydown", (e) => {
             e.preventDefault;
-            if (goodChars.includes(e.key)) wiper(e.key);
-            else if (e.key === "Backspace") {
+            if (e.key === "Backspace") {
                 if (!justCleared) screen.textContent = screen.textContent.slice(0,screen.textContent.length-1);
                 else screen.textContent = "";
             }
             else if (e.key === "=" || e.key ==="Enter") equals(screen.textContent);
+            else if (goodChars.includes(e.key) || zeroChars.includes(e.key)) wiper(e.key);
         })
     }
 
     function wiper(key){
-        if (justCleared && !zeroChars.includes(key)) {
+        if (screen.textContent === "ERROR" && zeroChars.includes(key)) screen.textContent = "0";
+        else if (justCleared && !zeroChars.includes(key) || screen.textContent == "ERROR") {
             screen.textContent = "";
         }
+        
         justCleared = false;
         
         
@@ -110,7 +112,7 @@
         return ans;
     }
 
-    function div(expression) { 
+    function div(expression) {
         let ans = whatToDo(expression[0]); 
         for(let i=1; i<expression.length; i++){
             ans /= whatToDo(expression[i]);
@@ -123,14 +125,13 @@
         for (let i=0; i<expression.length; i++){
             ans *= whatToDo(expression[i]);
         }
-        console.log(`expression ${expression} mul ${ans}`);
         return ans;
     }
 
     function equals() {
-        screen.textContent = screen.textContent.replace('-', '+-');
+        screen.textContent = screen.textContent.replace(/(?<=\d+)(-)(?=\d+)/g, '+-');
         let n = whatToDo(screen.textContent);
-        if (typeof n !== "number" || n === Infinity || n != n) {justCleared = true; screen.textContent = "ERROR"}
+        if (typeof n !== "number" || Math.abs(n) === Infinity || n != n) {justCleared = true; screen.textContent = "ERROR"}
         else screen.textContent = Math.floor(n*10000)/10000;
         justCleared = true;
     }
